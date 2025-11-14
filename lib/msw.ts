@@ -1,11 +1,10 @@
-import { TaskSchema } from "@/mocks/schema/task.schema";
+import { TaskSchema, TasksSchema } from "@/mocks/schema/task.schema";
 import { http, HttpResponse } from "msw";
 import { tasks, users } from "@/mocks/db.json";
 import { z } from "zod";
 
-
 export const handlers = [
-  http.get("api/users", () => {
+  http.get("/api/users", () => {
     z.array(
       z.object({
         id: z.string(),
@@ -15,8 +14,8 @@ export const handlers = [
     return HttpResponse.json(users);
   }),
 
-  http.get("api/tasks", () => {
-    const validated = TaskSchema.safeParse(tasks);
+  http.get("/api/tasks", () => {
+    const validated = TasksSchema.safeParse(tasks);
     if (!validated.success) {
       return HttpResponse.json(
         { error: "Invalid task data", issues: z.treeifyError(validated.error) },

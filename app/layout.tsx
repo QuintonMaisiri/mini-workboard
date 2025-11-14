@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+import { Provider } from "./Provider";
 
 export const metadata: Metadata = {
   title: "Mini Workboard",
@@ -18,9 +17,7 @@ export default function RootLayout({
       <body
         className="antialiased"
       >
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+       <Provider>{children}</Provider>
       </body>
     </html>
   );
