@@ -59,13 +59,13 @@ function CardEllipseDropdownMenu() {
 }
 
 function AvatarHoverCard({ name }: { name: string }) {
-    return (
-         <HoverCard>
+  return (
+    <HoverCard>
       <HoverCardTrigger asChild>
-        <Button variant="link">
-             <Avatar className="bg-indigo-400 rounded-full p-2 w-10 flex items-center justify-center h-10">
-          <AvatarFallback>{getInitials(name)}</AvatarFallback>
-        </Avatar>
+        <Button variant="link" className="p-0">
+          <Avatar className="bg-indigo-400 rounded-full p-2 w-10 flex items-center justify-center h-10">
+            <AvatarFallback>{getInitials(name)}</AvatarFallback>
+          </Avatar>
         </Button>
       </HoverCardTrigger>
       <HoverCardContent className="w-max">
@@ -76,18 +76,22 @@ function AvatarHoverCard({ name }: { name: string }) {
         </div>
       </HoverCardContent>
     </HoverCard>
-    )
+  );
 }
 
-
-
 export default function TaskCard({ task }: { task: Task }) {
- 
+  const priorityColors: { [key: string]: string } = {
+    Low: "bg-green-500",
+    Medium: "bg-yellow-500",
+    High: "bg-red-500",
+  };
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex gap-2 items-center text-gray-600">
-          <Clock />
+        <CardTitle className="flex gap-2 items-center text-gray-500">
+          <div
+            className={`w-5 h-5 ${priorityColors[task.priority]} rounded-full`}
+          ></div>
           {formatDateString(task.dueDate)}
         </CardTitle>
         <CardAction>
@@ -104,5 +108,3 @@ export default function TaskCard({ task }: { task: Task }) {
     </Card>
   );
 }
-
-  
