@@ -1,20 +1,26 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { ChevronDownIcon } from "lucide-react"
+import * as React from "react";
+import { ChevronDownIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
-export function Calendar22() {
-  const [open, setOpen] = React.useState(false)
-  const [date, setDate] = React.useState<Date | undefined>(undefined)
+export function Calendar22({
+  onChange,
+  value,
+  error,
+}: {
+  onChange: (date: string) => void;
+  value?: string;
+  error?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
 
   return (
     <div className="flex flex-col gap-3">
@@ -23,24 +29,24 @@ export function Calendar22() {
           <Button
             variant="outline"
             id="date"
-            className="w-48 justify-between font-normal"
+            className={`w-full justify-between font-normal ${error ? "border-red-500 ring-red-500 ring-2" : ""}`}
           >
-            {date ? date.toLocaleDateString() : "Select date"}
+            {value ? new Date(value).toLocaleDateString() : "Select date"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
             mode="single"
-            selected={date}
+            selected={value ? new Date(value) : undefined}
             captionLayout="dropdown"
             onSelect={(date) => {
-              setDate(date)
-              setOpen(false)
+              onChange(date?.toISOString().split("T")[0] || "");
+              setOpen(false);
             }}
           />
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

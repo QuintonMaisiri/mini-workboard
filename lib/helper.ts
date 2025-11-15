@@ -1,3 +1,6 @@
+import { useTasks } from "@/hooks/useTasks";
+import { Task } from "@/types/types";
+
 export function formatDateString(input: string): string {
     const date = new Date(input);
     if (isNaN(date.getTime())) return '';
@@ -18,3 +21,13 @@ export function formatDateString(input: string): string {
       .map((n) => n[0])
       .join("");
   };
+
+  export const generateTaskId = (tasks: Task[]) => {
+        const maxId = tasks.reduce((max: number, task: { id: string }) => {
+            const numericId = typeof task.id === 'string' && task.id.startsWith('t')
+                ? parseInt(task.id.slice(1), 10)
+                : Number(task.id);
+            return numericId > max ? numericId : max;
+        }, 0);
+        return `t${maxId + 1}`;
+  }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Provider } from "./Provider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Mini Workboard",
@@ -18,6 +19,7 @@ export default function RootLayout({
         className="antialiased"
       >
        <Provider>{children}</Provider>
+       <Toaster />
       </body>
     </html>
   );

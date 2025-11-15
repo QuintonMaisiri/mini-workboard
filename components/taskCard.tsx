@@ -25,11 +25,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { format } from "path";
 import { formatDateString, getInitials } from "@/lib/helper";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import ViewTaskSideSheet from "./viewTaskSideSheet";
+import { useTasks } from "@/hooks/useTasks";
+import { toast } from "sonner";
 
-function CardEllipseDropdownMenu() {
+function CardEllipseDropdownMenu({ id }: { id: string }) {
+  const { deleteTask } = useTasks();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,9 +42,24 @@ function CardEllipseDropdownMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
         <DropdownMenuGroup>
-          <DropdownMenuItem>Open</DropdownMenuItem>
+          <DropdownMenuItem>
+            <a href={`/tasks/${id}`}>Open</a>
+          </DropdownMenuItem>
           <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Delete</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              deleteTask.mutate(id, {
+                onSuccess: () => {
+                  toast.success("Task deleted!");
+                },
+                onError: () => {
+                  toast.error("Could not delete task");
+                },
+              })
+            }
+          >
+            Delete
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Mark as</DropdownMenuSubTrigger>
@@ -86,25 +104,29 @@ export default function TaskCard({ task }: { task: Task }) {
     High: "bg-red-500",
   };
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex gap-2 items-center text-gray-500">
-          <div
-            className={`w-5 h-5 ${priorityColors[task.priority]} rounded-full`}
-          ></div>
-          {formatDateString(task.dueDate)}
-        </CardTitle>
-        <CardAction>
-          <CardEllipseDropdownMenu />
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <h2 className="text-lg font-bold">{task.title}</h2>
-        <p>{task.description}</p>
-      </CardContent>
-      <CardFooter className="text-white">
-        <AvatarHoverCard name={task.assignee} />
-      </CardFooter>
-    </Card>
+    <ViewTaskSideSheet>
+      <Card className="h-max">
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="flex gap-2 items-center text-gray-500">
+            <div
+              className={`w-5 h-5 ${
+                priorityColors[task.priority]
+              } rounded-full`}
+            ></div>
+            {formatDateString(task.dueDate)}
+          </CardTitle>
+          <CardAction>
+            <CardEllipseDropdownMenu id={task.id} />
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <h2 className="text-lg font-bold">{task.title}</h2>
+          <p>{task.description}</p>
+        </CardContent>
+        <CardFooter className="text-white">
+          <AvatarHoverCard name={task.assignee} />
+        </CardFooter>
+      </Card>
+    </ViewTaskSideSheet>
   );
 }
