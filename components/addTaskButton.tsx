@@ -28,14 +28,13 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Priority, Task } from "@/types/types";
 import { useTasks } from "@/hooks/useTasks";
-import { generateTaskId } from "@/lib/helper";
+import { generateTaskId, showMissingDetailsErrorToast } from "@/lib/helper";
+import { assignees, priorities, statuses } from "@/lib/constants";
 
 export function AddTaskDialog({tasks} : {tasks: Task[]}) {
   const { createTask } = useTasks();
 
-  const priorities = ["Low", "Medium", "High"];
-  const statuses = ["Todo", "Doing", "Done"];
-  const assignees = ["Thandi", "Ayo", "Mia"];
+
   const [formData, setFormData] = useState<Partial<Task>>({
     title: "",
     description: "",
@@ -56,12 +55,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
     setErrors({});
   }, [formData]);
 
-  const showMissingDetailsErrorToast = (err: string) => {
-    toast.error("Not enough details", {
-      description: err,
-    });
-  };
-
+ 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title) {

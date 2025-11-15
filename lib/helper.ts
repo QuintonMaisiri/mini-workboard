@@ -1,5 +1,12 @@
-import { useTasks } from "@/hooks/useTasks";
+import { toast } from "sonner";
 import { Task } from "@/types/types";
+
+ export const showMissingDetailsErrorToast = (err: string) => {
+    toast.error("Not enough details", {
+      description: err,
+    });
+  };
+
 
 export function formatDateString(input: string): string {
     const date = new Date(input);

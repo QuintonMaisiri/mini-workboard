@@ -104,7 +104,7 @@ export default function TaskCard({ task }: { task: Task }) {
     High: "bg-red-500",
   };
   return (
-    <ViewTaskSideSheet>
+    <ViewTaskSideSheet task={task}>
       <Card className="h-max">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="flex gap-2 items-center text-gray-500">

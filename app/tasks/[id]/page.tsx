@@ -14,15 +14,13 @@ export default function TaskPage() {
       : Array.isArray(params.id)
       ? params.id[0]
       : "";
-  const { tasksQuery } = useTasks();
+  const { taskQuery } = useTasks(id);
 
-  if (tasksQuery.isLoading) {
+  if (taskQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
-  const task: Task | undefined = tasksQuery.data?.find(
-    (t: Task) => t.id === id
-  );
+  const task: Task | undefined = taskQuery.data
   if (!task) {
     return <div>Task not found</div>;
   }

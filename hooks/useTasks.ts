@@ -1,8 +1,22 @@
 import { Task } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export function useTasks(){
+export function useTasks(taskId?: string){
     const queryClient = useQueryClient();
+
+    const taskQuery = useQuery({
+        queryKey: ['task', taskId],
+        queryFn: async ({ queryKey }) => {
+            const id = queryKey[1];
+            if (!id) return null; 
+
+            const response = await fetch(`/api/tasks/${id}`);
+            if (!response.ok) throw new Error('Failed to fetch task');
+
+            return response.json();
+        },
+        enabled: !!taskId,
+    });
 
     const tasksQuery = useQuery({
         queryKey: ['tasks'],
@@ -117,6 +131,7 @@ export function useTasks(){
     });
 
     return {
+        taskQuery,
         tasksQuery,
         createTask,
         updateTask,
