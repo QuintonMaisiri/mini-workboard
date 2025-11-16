@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar22 } from "@/components/datePicker";
 import {
   Dialog,
   DialogClose,
@@ -31,9 +30,8 @@ import { useTasks } from "@/hooks/useTasks";
 import { generateTaskId, showMissingDetailsErrorToast } from "@/lib/helper";
 import { assignees, priorities, statuses } from "@/lib/constants";
 
-export function AddTaskDialog({tasks} : {tasks: Task[]}) {
+export function AddTaskDialog({ tasks }: { tasks: Task[] }) {
   const { createTask } = useTasks();
-
 
   const [formData, setFormData] = useState<Partial<Task>>({
     title: "",
@@ -55,7 +53,6 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
     setErrors({});
   }, [formData]);
 
- 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title?.trim()) {
@@ -90,17 +87,20 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
       setErrors({ ...errors, dueDate: true });
       return;
     }
-    
-    const id = generateTaskId(tasks)
 
-    createTask.mutate({...formData,id}, {
-      onSuccess: () => {
-        toast.success("Task created!");
-      },
-      onError: () => {
-        toast.error("Could not create task");
-      },
-    });
+    const id = generateTaskId(tasks);
+
+    createTask.mutate(
+      { ...formData, id },
+      {
+        onSuccess: () => {
+          toast.success("Task created!");
+        },
+        onError: () => {
+          toast.error("Could not create task");
+        },
+      }
+    );
     clearInputs();
   };
 
@@ -120,7 +120,8 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
       <form id="newTaskForm" onSubmit={onSubmit}>
         <DialogTrigger asChild>
           <Button className="bg-[#9854CB]">
-            Add New Task<Plus />
+            Add New Task
+            <Plus />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
@@ -134,6 +135,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
             <div className="grid gap-3">
               <Label htmlFor="title">Title</Label>
               <Input
+                aria-invalid={errors.title}
                 aria-label="Title"
                 id="title"
                 name="title"
@@ -146,6 +148,11 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                   errors.title ? "border-red-500 ring-red-500 ring-2" : ""
                 }
               />
+              {errors.title && (
+                <p id="title-error" className="text-sm text-red-600">
+                  Title is required.
+                </p>
+              )}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="description">Description</Label>
@@ -163,6 +170,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
               <Label htmlFor="priority">Priority</Label>
               <Select
                 required
+                aria-invalid={errors.priority}
                 value={formData.priority}
                 onValueChange={(v) =>
                   setFormData({ ...formData, priority: v as Priority })
@@ -187,6 +195,11 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {errors.priority && (
+                <p id="priority-error" className="text-sm text-red-600">
+                  Priority is required.
+                </p>
+              )}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="status">Status</Label>
@@ -211,6 +224,11 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {errors.status && (
+                <p id="status-error" className="text-sm text-red-600">
+                  Status is required.
+                </p>
+              )}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="assignee">Assignee</Label>
@@ -220,7 +238,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                 onValueChange={(v) => setFormData({ ...formData, assignee: v })}
               >
                 <SelectTrigger
-                id="assignee"
+                  id="assignee"
                   aria-label="Assignee"
                   className={`w-full  ${
                     errors.assignee ? "border-red-500 ring-red-500 ring-2" : ""
@@ -239,26 +257,33 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {errors.assignee && (
+                <p id="assignee-error" className="text-sm text-red-600">
+                  Assignee is required.
+                </p>
+              )}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="dueDate">Due Date</Label>
               <div className="w-full">
-                {/* <Calendar22
-                  error={errors.dueDate}
-                  value={formData.dueDate}
-                  onChange={(date) =>
-                    setFormData({ ...formData, dueDate: date })
-                  }
-                /> */}
                 <input
+                  aria-invalid={errors.dueDate}
+                  aria-describedby="dueDate-error"
                   type="date"
-                  id="dueDate" 
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.dueDate ? "border-red-500 ring-red-500 ring-2" : ""}`}
+                  id="dueDate"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.dueDate ? "border-red-500 ring-red-500 ring-2" : ""
+                  }`}
                   value={formData.dueDate}
                   onChange={(e) =>
                     setFormData({ ...formData, dueDate: e.target.value })
                   }
-                  />
+                />
+                {errors.dueDate && (
+                  <p id="dueDate-error" className="text-sm text-red-600">
+                    Due Date is required.
+                  </p>
+                )}
               </div>
             </div>
           </div>

@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { formatDateString, showMissingDetailsErrorToast } from "@/lib/helper";
-import { PenToolIcon, User, LoaderIcon, Calendar, Trash } from "lucide-react";
-import { Task } from "@/types/types";
+import { PenToolIcon, User, LoaderIcon, Calendar, Trash, Flag } from "lucide-react";
+import { Priority, Task } from "@/types/types";
 import { useTasks } from "@/hooks/useTasks";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -25,7 +25,7 @@ import {
   SelectLabel,
   SelectItem,
 } from "@/components/ui/select";
-import { assignees, statuses } from "@/lib/constants";
+import { assignees, priorities, statuses } from "@/lib/constants";
 import { Calendar22 } from "./datePicker";
 
 export default function ViewTaskSideSheet({
@@ -134,6 +134,35 @@ export default function ViewTaskSideSheet({
               </div>
             </div>
           </div>
+            <div className="flex gap-8 items-center">
+        <Flag />
+        <div className="w-full">
+          <h4 className="text-sm text-gray-400">Priority</h4>
+          {edit ? (
+            <Select
+              value={formData.priority}
+              onValueChange={(v) => setFormData({ ...formData, priority: v as Priority })}
+            >
+              <SelectTrigger className={`w-full `}>
+                <SelectValue placeholder="Select a priority" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Priority</SelectLabel>
+                  {priorities.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          ) : (
+            <p>{formData.priority}</p>
+          )}
+        </div>
+      </div>
           <div className="flex gap-8 items-center">
             <User />
             <div className="w-full">
