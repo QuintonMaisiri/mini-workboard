@@ -1,0 +1,302 @@
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus } from "lucide-react";
+import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useEffect, useState } from "react";
+import { Priority, Task } from "@/types/types";
+import { useTasks } from "@/hooks/useTasks";
+import { generateTaskId, showMissingDetailsErrorToast } from "@/lib/helper";
+import { assignees, priorities, statuses } from "@/lib/constants";
+
+export function AddTaskDialog({ tasks }: { tasks: Task[] }) {
+  const { createTask } = useTasks();
+
+  const [formData, setFormData] = useState<Partial<Task>>({
+    title: "",
+    description: "",
+    priority: "Low",
+    status: "Todo",
+    assignee: "",
+    dueDate: "",
+  });
+  const [errors, setErrors] = useState<{
+    title?: boolean;
+    priority?: boolean;
+    assignee?: boolean;
+    status?: boolean;
+    dueDate?: boolean;
+  }>({});
+
+  useEffect(() => {
+    setErrors({});
+  }, [formData]);
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title?.trim()) {
+      showMissingDetailsErrorToast("Title is required.");
+      setErrors({ ...errors, title: true });
+      return;
+    }
+    if (!formData.priority) {
+      showMissingDetailsErrorToast("Priority is required.");
+      setErrors({ ...errors, priority: true });
+      return;
+    }
+    if (!formData.assignee) {
+      showMissingDetailsErrorToast("You must assign the task to someone.");
+      setErrors({ ...errors, assignee: true });
+      return;
+    }
+    if (!formData.status) {
+      showMissingDetailsErrorToast("Task Status is required");
+      setErrors({ ...errors, status: true });
+      return;
+    }
+
+    if (!formData.dueDate) {
+      showMissingDetailsErrorToast("Due Date is required");
+      setErrors({ ...errors, dueDate: true });
+      return;
+    }
+
+    if (formData.dueDate && new Date(formData.dueDate) < new Date()) {
+      showMissingDetailsErrorToast("Due Date cannot be in the past.");
+      setErrors({ ...errors, dueDate: true });
+      return;
+    }
+
+    const id = generateTaskId(tasks);
+
+    createTask.mutate(
+      { ...formData, id },
+      {
+        onSuccess: () => {
+          toast.success("Task created!");
+        },
+        onError: () => {
+          toast.error("Could not create task");
+        },
+      }
+    );
+    clearInputs();
+  };
+
+  const clearInputs = () => {
+    setFormData({
+      title: "",
+      description: "",
+      priority: "Low",
+      status: "Todo",
+      assignee: "",
+      dueDate: "",
+    });
+  };
+
+  return (
+    <Dialog>
+      <form id="newTaskForm" onSubmit={onSubmit}>
+        <DialogTrigger asChild>
+          <Button className="bg-[#9854CB]">
+            Add New Task
+            <Plus />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Task</DialogTitle>
+            <DialogDescription>
+              Fill in the details for your new task.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-3">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                aria-invalid={errors.title}
+                aria-label="Title"
+                id="title"
+                name="title"
+                required={true}
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                className={
+                  errors.title ? "border-red-500 ring-red-500 ring-2" : ""
+                }
+              />
+              {errors.title && (
+                <p id="title-error" className="text-sm text-red-600">
+                  Title is required.
+                </p>
+              )}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                aria-label="Description"
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="priority">Priority</Label>
+              <Select
+                required
+                aria-invalid={errors.priority}
+                value={formData.priority}
+                onValueChange={(v) =>
+                  setFormData({ ...formData, priority: v as Priority })
+                }
+              >
+                <SelectTrigger
+                  aria-label="Priority"
+                  className={`w-full  ${
+                    errors.priority ? "border-red-500 ring-red-500 ring-2" : ""
+                  }`}
+                >
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Priority</SelectLabel>
+                    {priorities.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {errors.priority && (
+                <p id="priority-error" className="text-sm text-red-600">
+                  Priority is required.
+                </p>
+              )}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                required
+                value={formData.status}
+                onValueChange={(v) =>
+                  setFormData({ ...formData, status: v as Task["status"] })
+                }
+              >
+                <SelectTrigger aria-label="Status" className="w-full">
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Status</SelectLabel>
+                    {statuses.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {errors.status && (
+                <p id="status-error" className="text-sm text-red-600">
+                  Status is required.
+                </p>
+              )}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="assignee">Assignee</Label>
+              <Select
+                value={formData.assignee}
+                required
+                onValueChange={(v) => setFormData({ ...formData, assignee: v })}
+              >
+                <SelectTrigger
+                  id="assignee"
+                  aria-label="Assignee"
+                  className={`w-full  ${
+                    errors.assignee ? "border-red-500 ring-red-500 ring-2" : ""
+                  }`}
+                >
+                  <SelectValue placeholder="Select an assignee" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Assignee</SelectLabel>
+                    {assignees.map((a) => (
+                      <SelectItem key={a} value={a}>
+                        {a}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {errors.assignee && (
+                <p id="assignee-error" className="text-sm text-red-600">
+                  Assignee is required.
+                </p>
+              )}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="dueDate">Due Date</Label>
+              <div className="w-full">
+                <input
+                  aria-invalid={errors.dueDate}
+                  aria-describedby="dueDate-error"
+                  type="date"
+                  id="dueDate"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.dueDate ? "border-red-500 ring-red-500 ring-2" : ""
+                  }`}
+                  value={formData.dueDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dueDate: e.target.value })
+                  }
+                />
+                {errors.dueDate && (
+                  <p id="dueDate-error" className="text-sm text-red-600">
+                    Due Date is required.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit" form="newTaskForm">
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+  );
+}
