@@ -61,7 +61,7 @@ http://localhost:3000
 * Tests for:
 
   * API fetch logic
-  * Task creation
+  * Home Page static content
   * Form validation
 
 ---
