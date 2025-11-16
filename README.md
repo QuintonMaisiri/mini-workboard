@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🗂️ Mini Workboard — Task Management App
 
-## Getting Started
+A lightweight and modern task management app built with **Next.js**, **TypeScript**, **React Query**, and **shadcn/ui**.
+Create tasks, set priorities, assign team members, and manage workflow with a fast and accessible UI.
 
-First, run the development server:
+---
+
+## 🚀 Getting Started
+
+Install dependencies:
 
 ```bash
-npm run dev
+yarn install
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run the development server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn dev
+# or
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Visit the app at:
 
-## Learn More
+```
+http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ✔️ Task Management
 
-## Deploy on Vercel
+* Create tasks through an accessible modal
+* Add title, description, assignee, priority, status, and due date
+* Form validation with inline error highlighting
+* Toast notifications using **sonner**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🎨 UI & Styling
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Built with **shadcn/ui**
+* Fully keyboard-accessible dialogs and forms
+* Clean, minimal design
+* Icons powered by **lucide-react**
+
+### ⚡ Data Fetching & Mutations (React Query)
+
+* Fetch tasks with `useQuery`
+* Create tasks with `useMutation`
+* Automatic cache updates using `QueryClientProvider`
+* Smooth optimistic UI handling
+
+### 🧪 Testing (Jest + React Testing Library)
+
+* MSW (Mock Service Worker) for API mocking
+* Zod for JSON schema validation
+* Tests for:
+
+  * API fetch logic
+  * Task creation
+  * Form validation
+
+---
+
+
+## 🧩 Technologies Used
+
+| Tech        | Purpose                  |
+| ----------- | ------------------------ |
+| Next.js     | Framework                |
+| TypeScript  | Type safety              |
+| shadcn/ui   | Accessible UI components |
+| React Query | Data fetching + caching  |
+| MSW         | API request mocking      |
+| Zod         | Schema validation        |
+| Vitest      | Testing                  |
+| Sonner      | Toast notifications      |
+
+---
+
+## 📦 Scripts
+
+```bash
+yarn dev        # Run dev server
+yarn build      # Build production
+yarn start      # Run production build
+yarn test       # Run test suite
+```
+
+---
+
