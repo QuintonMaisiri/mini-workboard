@@ -37,6 +37,7 @@ export function Calendar22({
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
+            id="dueDate"
             mode="single"
             selected={value ? new Date(value) : undefined}
             captionLayout="dropdown"

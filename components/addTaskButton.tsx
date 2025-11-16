@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Priority, Task } from "@/types/types";
 import { useTasks } from "@/hooks/useTasks";
 import { generateTaskId, showMissingDetailsErrorToast } from "@/lib/helper";
@@ -58,7 +58,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
  
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title) {
+    if (!formData.title?.trim()) {
       showMissingDetailsErrorToast("Title is required.");
       setErrors({ ...errors, title: true });
       return;
@@ -134,6 +134,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
             <div className="grid gap-3">
               <Label htmlFor="title">Title</Label>
               <Input
+                aria-label="Title"
                 id="title"
                 name="title"
                 required={true}
@@ -149,6 +150,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
             <div className="grid gap-3">
               <Label htmlFor="description">Description</Label>
               <Textarea
+                aria-label="Description"
                 id="description"
                 name="description"
                 value={formData.description}
@@ -167,6 +169,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                 }
               >
                 <SelectTrigger
+                  aria-label="Priority"
                   className={`w-full  ${
                     errors.priority ? "border-red-500 ring-red-500 ring-2" : ""
                   }`}
@@ -194,7 +197,7 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                   setFormData({ ...formData, status: v as Task["status"] })
                 }
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger aria-label="Status" className="w-full">
                   <SelectValue placeholder="Select a status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -217,6 +220,8 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
                 onValueChange={(v) => setFormData({ ...formData, assignee: v })}
               >
                 <SelectTrigger
+                id="assignee"
+                  aria-label="Assignee"
                   className={`w-full  ${
                     errors.assignee ? "border-red-500 ring-red-500 ring-2" : ""
                   }`}
@@ -238,13 +243,22 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
             <div className="grid gap-3">
               <Label htmlFor="dueDate">Due Date</Label>
               <div className="w-full">
-                <Calendar22
+                {/* <Calendar22
                   error={errors.dueDate}
                   value={formData.dueDate}
                   onChange={(date) =>
                     setFormData({ ...formData, dueDate: date })
                   }
-                />
+                /> */}
+                <input
+                  type="date"
+                  id="dueDate" 
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.dueDate ? "border-red-500 ring-red-500 ring-2" : ""}`}
+                  value={formData.dueDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dueDate: e.target.value })
+                  }
+                  />
               </div>
             </div>
           </div>
