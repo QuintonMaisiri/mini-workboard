@@ -1,33 +1,43 @@
 "use client";
 
 import { AddTaskDialog } from "@/components/addTaskButton";
-import TaskCard from "@/components/taskCard";
+import Image from "next/image";
 import TaskFilters from "@/components/taskFilters";
 import TaskList from "@/components/taskList";
-import RightDrawer from "@/components/viewTaskSideSheet";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { useTasks } from "@/hooks/useTasks";
 import { Task } from "@/types/types";
-
-export const taskStatusList = ["Todo", "Doing", "Done"];
+import { LoadingSpinner } from "@/components/loading";
+import { Error } from "@/components/error";
 
 export default function Home() {
   const { tasksQuery } = useTasks();
   const filtersState = useTaskFilters();
 
-  if (tasksQuery.isLoading) return <p>Loading tasks...</p>;
-  if (tasksQuery.isError) return <p>Error loading tasks</p>;
-
   let data: Task[] = tasksQuery.data;
 
   return (
-    <div className="min-h-screen flex flex-col max-w-[1400px] mx-auto p-8 gap-8 ">
+    <div className="min-h-screen flex flex-col max-w-[1400px] mx-auto p-8 gap-8 bg-gray-100 ">
       <TaskFilters {...filtersState} />
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Board</h1>
-        <AddTaskDialog tasks={data} />
+      <div className="w-full bg-white p-8 py-16  rounded-lg flex items-center justify-between relative">
+        <div className="space-y-4">
+         <div>
+           <h1 className="text-[40px] font-bold">Task Board</h1>
+          <p >Manage your tasks efficiently</p>
+         </div>
+          <AddTaskDialog tasks={data} />
+        </div>
+        <Image
+          src="/images/time-management.png"
+          alt="time management illustration"
+          width={300}
+          height={300}
+          className="absolute right-8 bottom-0"
+        />
       </div>
-      <TaskList tasks={data} filters={filtersState.filters} />
+     {
+      tasksQuery.isLoading ? <LoadingSpinner /> : tasksQuery.error ? <Error />: <TaskList tasks={data} {...filtersState} />
+     }
     </div>
   );
 }

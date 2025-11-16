@@ -119,8 +119,8 @@ export function AddTaskDialog({tasks} : {tasks: Task[]}) {
     <Dialog>
       <form id="newTaskForm" onSubmit={onSubmit}>
         <DialogTrigger asChild>
-          <Button variant="outline">
-            <Plus />
+          <Button className="bg-[#9854CB]">
+            Add New Task<Plus />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

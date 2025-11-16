@@ -1,11 +1,7 @@
 "use client";
 
-import { AddTaskDialog } from "@/components/addTaskButton";
 import TaskCard from "@/components/taskCard";
-import TaskFilters from "@/components/taskFilters";
-import RightDrawer from "@/components/viewTaskSideSheet";
-import { Filters, useTaskFilters } from "@/hooks/useTaskFilters";
-import { useTasks } from "@/hooks/useTasks";
+import { Filters } from "@/hooks/useTaskFilters";
 import { Task } from "@/types/types";
 
 export const taskStatusList = ["Todo", "Doing", "Done"];
@@ -44,7 +40,12 @@ export default function TaskList({ tasks, filters }: TaskListProps) {
     tasks = tasks.sort((a, b) => order[a.priority] - order[b.priority]);
   }
 
-  if (!tasks.length) return <p>No tasks match your filters.</p>;
+  if (!tasks.length)
+    return (
+      <div className="flex items-center justify-center">
+        <p>No tasks match your filters.</p>
+      </div>
+    );
 
   return (
     <div className="flex-1 grid grid-cols-4 gap-4">
